@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const createError = require("http-errors");
-const User = require("../models/User");
+const createError = require('http-errors');
+const User = require('../models/User');
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -30,10 +30,10 @@ module.exports.login = async (req, res, next) => {
 module.exports.logout = async (req, res, next) => {
   try {
     res
-      .clearCookie("authToken")
+      .clearCookie('authToken')
       .status(200)
-      .json({ result: "success" });
+      .json({ result: 'success' });
   } catch (err) {
-    next(createError(500, "로그아웃에 실패했습니다."));
+    next(createError(500, '로그아웃에 실패했습니다.'));
   }
 }

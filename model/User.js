@@ -40,16 +40,20 @@ const User = new mongoose.Schema({
           type: Number
         },
         habitType: {
-          type: String
+          type: String,
+          unique: true
         },
         isDoneToday: {
           type: Boolean
         },
-        targetDay: {
+        settedDay: {
           type: String
         },
         achivedDay: {
           type: String
+        },
+        settedTime: {
+          type: Number
         },
         startTime: {
           type: Date
