@@ -6,8 +6,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const authRouter = require("./routes/auth");
+const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
+const habitRouter = require('./routes/habit')
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
+app.use('/habit', habitRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
