@@ -1,4 +1,4 @@
-import User from '../model/User';
+const User = require('../model/User');
 
 module.exports.postHabit = async (req, res, next) => {
   // 팔로잉 하고 있는 사람 있는지 확인 후 mate 수도 늘려줘야 함.
@@ -31,7 +31,7 @@ module.exports.postHabit = async (req, res, next) => {
       }
 
       user.habbit.push(newHabit);
-      user.save();
+      await user.save();
 
       res
         .status(201)
@@ -67,7 +67,7 @@ module.exports.deleteHabit = async (req, res, next) => {
     });
 
     user.habit.splice(deleteIndex, 1);
-    user.save();
+    await user.save();
 
     res
       .status(200)

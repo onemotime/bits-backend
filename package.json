@@ -7,6 +7,7 @@
     "dev": "nodemon --inspect ./bin/www"
   },
   "dependencies": {
+    "argon2": "^0.27.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^9.0.0",

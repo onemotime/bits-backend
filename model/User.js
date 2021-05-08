@@ -1,14 +1,17 @@
 const mongoose = require("mongoose");
 
-const User = new mongoose.Schema({
-  naem: {
-    type: Stirng,
-    required: [true, 'A user must have a name']
-  },
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: [true, 'A user must have an email']
+    trim: true,
+    required: [true, 'A user must have a name']
+  },
+  password: {
+    type: String,
+    minLength: 8,
+    trime: true,
+    required: [true, 'A user must have a password']
   },
   followers: {
     type: [
@@ -67,4 +70,8 @@ const User = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("User", User);
+userSchema.statics.checkUserExists = function (userId) {
+  return this.exists({ userId });
+};
+
+module.exports = mongoose.model('User', userSchema);
