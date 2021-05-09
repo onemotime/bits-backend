@@ -48,14 +48,14 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.signup = async (req, res, next) => {
   try {
-    const isUserExists = await User.checkUserExists(req.body.email);
+    const { email, password } = req.body;
+    const isUserExists = await User.checkUserExists(email);
 
     if (isUserExists) {
       return next(createError(409, 'already existing user'));
     }
 
-    const { email, password } = req.body;
-    const hashedPassword = await argon2.hash(password);
+    const hashedPassword = await argon2.hash(password, 10);
 
     await User.create({
       email,
@@ -64,9 +64,7 @@ module.exports.signup = async (req, res, next) => {
 
     res
       .status(201)
-      .json({
-        message: 'user signedup sucessfully'
-      });
+      .json({ message: 'user signedup sucessfully' });
   } catch (err) {
     next(createError(500, err));
   }

@@ -5,13 +5,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     trim: true,
-    required: [true, 'A user must have a name']
+    required: true,
   },
   password: {
     type: String,
+    trim: true,
     minLength: 8,
-    trime: true,
-    required: [true, 'A user must have a password']
+    required: true,
   },
   followers: {
     type: [
@@ -43,8 +43,7 @@ const userSchema = new mongoose.Schema({
           type: Number
         },
         habitType: {
-          type: String,
-          unique: true
+          type: String
         },
         isDoneToday: {
           type: Boolean
