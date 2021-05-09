@@ -1,4 +1,5 @@
 const User = require('../model/User');
+const createError =  require('http-errors');
 
 module.exports.postHabit = async (req, res, next) => {
   try {
@@ -9,7 +10,10 @@ module.exports.postHabit = async (req, res, next) => {
         const newHabit = {
           habitType: actType,
           settedDay: day,
-          settedTime: time
+          settedTime: time,
+          achivedDay: 0,
+          mate: 0,
+          like: 0
         };
 
         user.habits.push(newHabit);
@@ -29,23 +33,22 @@ module.exports.postHabit = async (req, res, next) => {
 
 module.exports.deleteHabit = async (req, res, next) => {
   try {
-    const email = req.userEmail;
-    const { habitType } = req.body;
+    const { email, targetIndex } = req.body;
 
     const user = await User.findOne({ email });
 
     if (!user) next(createError(404, 'can not find user'));
 
-    const deleteIndex = user.habit.findIndex(item => {
-      return item.habitType === habitType;
-    });
+    // const deleteIndex = user.habit.findIndex(item => {
+    //   return item.habitType === habitType;
+    // });
 
-    user.habit.splice(deleteIndex, 1);
+    user.habits.splice(targetIndex, 1);
+
     await user.save();
 
-    res
-      .status(200)
-      .json({
+    res.json({
+        status: 200,
         result: 'success',
         message: 'habit deleted succefully'
       });

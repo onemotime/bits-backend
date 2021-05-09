@@ -45,8 +45,7 @@ const userSchema = new mongoose.Schema({
     type: [
       {
         mate: {
-          type: Number,
-          default: 0
+          type: Number
         },
         habitType: {
           type: String
@@ -66,7 +65,7 @@ const userSchema = new mongoose.Schema({
         startTime: {
           type: Date
         },
-        likes: {
+        like: {
           type: Number
         }
       }
