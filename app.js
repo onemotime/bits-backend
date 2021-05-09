@@ -2,7 +2,6 @@ require('dotenv').config();
 
 const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
@@ -28,11 +27,11 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    status: err.status,
+    message: err.message ? err.message : 'Internal server error'
+  });
 });
 
 module.exports = app;

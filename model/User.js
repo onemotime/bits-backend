@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
+  userName: {
+    type: String,
+    unique: true,
+    required: true
+  },
   password: {
     type: String,
     trim: true,
@@ -36,11 +41,12 @@ const userSchema = new mongoose.Schema({
     ],
     default: [],
   },
-  habit: {
+  habits: {
     type: [
       {
         mate: {
-          type: Number
+          type: Number,
+          default: 0
         },
         habitType: {
           type: String
@@ -55,7 +61,7 @@ const userSchema = new mongoose.Schema({
           type: String
         },
         settedTime: {
-          type: Number
+          type: String
         },
         startTime: {
           type: Date
@@ -69,8 +75,8 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.statics.checkUserExists = function (userId) {
-  return this.exists({ userId });
+userSchema.statics.checkUserExists = function (email) {
+  return this.exists({ email });
 };
 
 module.exports = mongoose.model('User', userSchema);

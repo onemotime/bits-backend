@@ -1,54 +1,27 @@
 const User = require('../model/User');
 
 module.exports.postHabit = async (req, res, next) => {
-  // 팔로잉 하고 있는 사람 있는지 확인 후 mate 수도 늘려줘야 함.
   try {
-    const email = req.userEmail;
-    const { habitType, settedDay, settedTime } = req.body;
-    const user = await User.findOne({ email });
-    // 팔로잉 하고 있는 사람이 없고
-    // 기존에 이 타입의 습관이 없으면 새로 넣는다
-    if (!user.following) {
-      const isHabitRegistered = user.habbit.some(item => {
-        return item.habitType === habitType;
-      });
+    const { email, actType, day, time } = req.body;
 
-      if (isHabitRegistered) {
-        res
-          .status(208)
-          .json({
-            result: 'fail',
-            message: 'data in already registered'
-          });
+    User.findOne({ email }, (err , user) => {
+      if (!user.following.length) {
+        const newHabit = {
+          habitType: actType,
+          settedDay: day,
+          settedTime: time
+        };
 
-        return;
-      }
+        user.habits.push(newHabit);
+        user.save();
 
-      // 이 유저 오브젝트 아이디로 document 찾아서
-      // 같은 습관을 가진 사람을 배열로 뽑아오거나 수만
-      // 뽑아올수 있나 ??
-
-      // populate통해서 mate가 몇명인지 추출해오자
-
-      const newHabit = {
-        habitType,
-        settedDay,
-        settedTime,
-        mate
-      };
-
-      user.habbit.push(newHabit);
-      await user.save();
-
-      res
-        .status(201)
-        .json({
-          result: 'success',
+        res.json({
+          newHabit,
+          status: 201,
           message: 'habit registered successfully'
         });
-
-      return;
-    }
+      }
+    });
   } catch (err) {
     next(createError(500, err.message));
   }
