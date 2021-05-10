@@ -74,3 +74,16 @@ module.exports.signup = async (req, res, next) => {
     next(createError(500, err));
   }
 };
+
+module.exports.fetchUser = async (req, res, next) => {
+  try {
+    const users = await User.find({}, { userName : 1 })
+
+    res.json({
+      status: 200,
+      users
+    });
+  } catch (err) {
+    next(createError(500, err.message));
+  }
+};
