@@ -20,11 +20,49 @@ module.exports.postHabit = async (req, res, next) => {
         user.save();
 
         res.json({
-          newHabit,
           status: 201,
+          newHabit,
           message: 'habit registered successfully'
         });
       }
+    });
+  } catch (err) {
+    next(createError(500, err.message));
+  }
+};
+
+module.exports.patchHabit = async (req, res, next) => {
+  try {
+    const { email, habitType } = req.body;
+
+    const user = await User.findOne({ email });
+
+    const targetIndex = user.habits.findIndex(habit => {
+      return habit.habitType === habitType;
+    });
+
+    user.habits[targetIndex].achivedDay = Number(user.habits[targetIndex].achivedDay) + 1;
+
+    if (user.habits[targetIndex].achivedDay === user.habits[targetIndex].settedDay) {
+      const isRegisteredHabit = user.completedHabits.some(habit => {
+        return habit === habitType;
+      });
+
+      const targetIndex = user.habits.findIndex(habit => {
+        return habit === habitType;
+      });
+
+      user.habits.splice(targetIndex, 1);
+
+      if (!isRegisteredHabit) user.completedHabits.push(habitType);
+    }
+
+    user.save();
+
+    res.json({
+      status: 200,
+      habits: user.habits,
+      message: 'habit patched successfully'
     });
   } catch (err) {
     next(createError(500, err.message));

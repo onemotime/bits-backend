@@ -41,6 +41,14 @@ const userSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  completedHabits: {
+    type: [
+      {
+        type: String
+      }
+    ],
+    default: []
+  },
   habits: {
     type: [
       {
