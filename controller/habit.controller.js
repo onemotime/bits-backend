@@ -21,7 +21,7 @@ module.exports.postHabit = async (req, res, next) => {
 
         res.json({
           status: 201,
-          newHabit,
+          habits: user.habits,
           message: 'habit registered successfully'
         });
       }
@@ -45,10 +45,6 @@ module.exports.patchHabit = async (req, res, next) => {
 
     if (user.habits[targetIndex].achivedDay === user.habits[targetIndex].settedDay) {
       const isRegisteredHabit = user.completedHabits.some(habit => {
-        return habit === habitType;
-      });
-
-      const targetIndex = user.habits.findIndex(habit => {
         return habit === habitType;
       });
 
