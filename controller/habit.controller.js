@@ -5,14 +5,54 @@ module.exports.postHabit = async (req, res, next) => {
   try {
     const { email, actType, day, time } = req.body;
 
-    User.findOne({ email }, (err , user) => {
-      if (!user.following.length) {
+    const user = await User.findOne({ email });
+    const isFollowing = user.following.length === 0;
+
+    if (isFollowing) {
+      const newHabit = {
+        habitType: actType,
+        settedDay: day,
+        settedTime: time,
+        achivedDay: 0,
+        mate: 0,
+        like: 0
+      };
+
+      user.habits.push(newHabit);
+      user.save();
+
+      res.json({
+        status: 201,
+        habits: user.habits,
+        message: 'habit registered successfully'
+      });
+
+      return;
+    }
+
+    User.findOne({ email })
+      .populate('following.id')
+      .exec((err, populatedUser) => {
+        if (err) {
+          next(createError(500, err.message));
+        }
+
+        let sameHabitCount = 0;
+
+        populatedUser.following.map(followingUser => {
+          followingUser.id.habits.forEach(habit => {
+            if (habit.habitType === actType) {
+              sameHabitCount++;
+            }
+          });
+        });
+
         const newHabit = {
           habitType: actType,
           settedDay: day,
           settedTime: time,
           achivedDay: 0,
-          mate: 0,
+          mate: sameHabitCount,
           like: 0
         };
 
@@ -24,8 +64,7 @@ module.exports.postHabit = async (req, res, next) => {
           habits: user.habits,
           message: 'habit registered successfully'
         });
-      }
-    });
+      });
   } catch (err) {
     next(createError(500, err.message));
   }
@@ -58,6 +97,7 @@ module.exports.patchHabit = async (req, res, next) => {
     res.json({
       status: 200,
       habits: user.habits,
+      completedHabits: user.completedHabits,
       message: 'habit patched successfully'
     });
   } catch (err) {

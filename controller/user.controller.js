@@ -47,7 +47,7 @@ module.exports.login = async (req, res, next) => {
     }
 
     const accessToken = jwt.sign(JSON.stringify(user._id), process.env.JWT_SECRET);
-    const habits = user.habits
+    const habits = user.habits;
 
     res.json({
       status: 200,
@@ -129,14 +129,6 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
             userName,
             habits
           };
-        });
-
-        console.log('팔로잉 유저 해빗', followingUserHabits);
-        Object.keys(followingUserHabits).forEach(key => {
-          console.log('키 값' + key);
-        });
-        Object.values(followingUserHabits).forEach(value => {
-          console.log('밸류 값' + value);
         });
 
         res.json({
