@@ -108,3 +108,43 @@ module.exports.followUser = async (req, res, next) => {
     next(createError(500, err));
   }
 };
+
+module.exports.fetchFollowingUser = async (req, res, next) => {
+  console.log('패칭 팔로잉 유저 진입 완료');
+  try {
+    const { email } = req.body;
+    console.log('이메일' + email);
+    User.findOne({ email })
+      .populate('following.id')
+      .exec((err, followingUser) => {
+        if (err) {
+          next(createError(500, err.message));
+        }
+
+        const followingUserHabits = followingUser.following.map(user => {
+          const userName = user.id.userName;
+          const habits = user.id.habits;
+
+          return {
+            userName,
+            habits
+          };
+        });
+
+        console.log('팔로잉 유저 해빗', followingUserHabits);
+        Object.keys(followingUserHabits).forEach(key => {
+          console.log('키 값' + key);
+        });
+        Object.values(followingUserHabits).forEach(value => {
+          console.log('밸류 값' + value);
+        });
+
+        res.json({
+          status: 200,
+          followingUserHabits
+        });
+      });
+  } catch (err) {
+    next(createError(500, err));
+  }
+};
