@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema({
     type: [
       {
         isSubscribing: {
-          type: Boolean
+          type: Boolean,
+          default: true
         },
         id: {
           type: mongoose.Types.ObjectId,

@@ -18,31 +18,44 @@ const argon2 = require('argon2');
 //   }
 // };
 
+module.exports.fetchUser = async (req, res, next) => {
+  try {
+    const users = await User.find({}, { userName : 1, following: 1 })
+
+    res.json({
+      status: 200,
+      users
+    });
+  } catch (err) {
+    next(createError(500, err.message));
+  }
+};
+
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const currentUser = await User.findOne({ email }).lean();
+    const user = await User.findOne({ email }).lean();
 
-    if (!currentUser) {
+    if (!user) {
       return next(createError(400, 'user not exist'));
     }
 
-    const isCorrectPassword = argon2.verify(currentUser.password, password);
+    const isCorrectPassword = argon2.verify(user.password, password);
 
     if (!isCorrectPassword) {
       return next(createError(403, 'invalid password'));
     }
 
-    const accessToken = jwt.sign(JSON.stringify(currentUser._id), process.env.JWT_SECRET);
-    const habits = currentUser.habits
+    const accessToken = jwt.sign(JSON.stringify(user._id), process.env.JWT_SECRET);
+    const habits = user.habits
 
     res.json({
-        status: 200,
-        userName: currentUser.userName,
-        email,
-        accessToken,
-        habits
-      });
+      status: 200,
+      userName: user.userName,
+      email,
+      accessToken,
+      habits
+    });
   } catch (err) {
     next(createError(500, err.message));
   }
@@ -64,26 +77,34 @@ module.exports.signup = async (req, res, next) => {
       password: hashedPassword
     });
 
-    res
-      .json({
-        status: 201,
-        message: 'user signedup sucessfully'
-      });
+    res.json({
+      status: 201,
+      message: 'user signedup sucessfully'
+    });
   } catch (err) {
-    console.log('에러' + err)
     next(createError(500, err));
   }
 };
 
-module.exports.fetchUser = async (req, res, next) => {
+module.exports.followUser = async (req, res, next) => {
   try {
-    const users = await User.find({}, { userName : 1 })
+    const { email, followId } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return next(createError(400, 'user not exist'));
+    }
+
+    const followUser = await User.findById(followId);
+
+    user.following.push({ id: followUser._id, isSubscribing: true });
+    user.save();
 
     res.json({
       status: 200,
-      users
+      following: user.following
     });
   } catch (err) {
-    next(createError(500, err.message));
+    next(createError(500, err));
   }
 };

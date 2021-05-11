@@ -69,17 +69,17 @@ module.exports.deleteHabit = async (req, res, next) => {
   try {
     const { email, targetIndex } = req.body;
 
-    const user = await User.findOne({ email });
+    const currentUser = await User.findOne({ email });
 
-    if (!user) next(createError(404, 'can not find user'));
+    if (!currentUser) next(createError(404, 'can not find user'));
 
     // const deleteIndex = user.habit.findIndex(item => {
     //   return item.habitType === habitType;
     // });
 
-    user.habits.splice(targetIndex, 1);
+    currentUser.habits.splice(targetIndex, 1);
 
-    await user.save();
+    await currentUser.save();
 
     res.json({
         status: 200,
