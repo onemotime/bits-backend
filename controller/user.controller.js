@@ -20,11 +20,16 @@ const argon2 = require('argon2');
 
 module.exports.fetchUser = async (req, res, next) => {
   try {
-    const users = await User.find({}, { userName : 1, following: 1 })
-
+    const { email } = req.body;
+    const users = await User.find({}, { userName : 1, following: 1, imageUri: 1 })
+    const user = await User.findOne({ email });
+    console.log(users);
     res.json({
       status: 200,
-      users
+      payload: {
+        users,
+        following: user.following
+      }
     });
   } catch (err) {
     next(createError(500, err.message));
@@ -40,21 +45,24 @@ module.exports.login = async (req, res, next) => {
       return next(createError(400, 'user not exist'));
     }
 
-    const isCorrectPassword = argon2.verify(user.password, password);
+    const isCorrectPassword = await argon2.verify(user.password, password);
 
     if (!isCorrectPassword) {
       return next(createError(403, 'invalid password'));
     }
 
     const accessToken = jwt.sign(JSON.stringify(user._id), process.env.JWT_SECRET);
-    const habits = user.habits;
+
 
     res.json({
       status: 200,
       userName: user.userName,
       email,
       accessToken,
-      habits
+      habits: user.habits,
+      following: user.following,
+      imageUri: user.imageUri,
+      completedDates: user.completedDates
     });
   } catch (err) {
     next(createError(500, err.message));
@@ -110,10 +118,9 @@ module.exports.followUser = async (req, res, next) => {
 };
 
 module.exports.fetchFollowingUser = async (req, res, next) => {
-  console.log('패칭 팔로잉 유저 진입 완료');
   try {
     const { email } = req.body;
-    console.log('이메일' + email);
+
     User.findOne({ email })
       .populate('following.id')
       .exec((err, followingUser) => {
@@ -136,6 +143,24 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
           followingUserHabits
         });
       });
+  } catch (err) {
+    next(createError(500, err));
+  }
+};
+
+module.exports.postImageUrl = async (req, res, next) => {
+  console.log(req.body);
+  try {
+    const { uri, email } = req.body;
+    const user = await User.findOne({ email });
+    console.log(uri, email);
+    user.imageUri = uri;
+    user.save();
+
+    res.json({
+      status: 201,
+      uri
+    });
   } catch (err) {
     next(createError(500, err));
   }

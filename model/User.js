@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
     minLength: 8,
     required: true,
   },
+  imageUri: {
+    type: String,
+    default: ''
+  },
   followers: {
     type: [
       {
@@ -41,6 +45,14 @@ const userSchema = new mongoose.Schema({
       }
     ],
     default: [],
+  },
+  completedDates: {
+    type: [
+      {
+        type: String
+      }
+    ],
+    default: []
   },
   completedHabits: {
     type: [

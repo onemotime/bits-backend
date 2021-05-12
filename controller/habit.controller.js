@@ -72,24 +72,28 @@ module.exports.postHabit = async (req, res, next) => {
 
 module.exports.patchHabit = async (req, res, next) => {
   try {
-    const { email, habitType } = req.body;
-
+    const { email, habitType, date } = req.body;
+    console.log(date);
     const user = await User.findOne({ email });
 
-    const targetIndex = user.habits.findIndex(habit => {
+    const sameHabitIndex = user.habits.findIndex(habit => {
       return habit.habitType === habitType;
     });
 
-    user.habits[targetIndex].achivedDay = Number(user.habits[targetIndex].achivedDay) + 1;
+    user.habits[sameHabitIndex].achivedDay = Number(user.habits[sameHabitIndex].achivedDay) + 1;
 
-    if (user.habits[targetIndex].achivedDay === user.habits[targetIndex].settedDay) {
+    if (user.habits[sameHabitIndex].achivedDay === user.habits[sameHabitIndex].settedDay) {
       const isRegisteredHabit = user.completedHabits.some(habit => {
         return habit === habitType;
       });
 
-      user.habits.splice(targetIndex, 1);
+      user.habits.splice(sameHabitIndex, 1);
 
       if (!isRegisteredHabit) user.completedHabits.push(habitType);
+
+      if (!user.completedDates.includes(date)) {
+        user.completedDates.push(date);
+      }
     }
 
     user.save();
@@ -98,6 +102,7 @@ module.exports.patchHabit = async (req, res, next) => {
       status: 200,
       habits: user.habits,
       completedHabits: user.completedHabits,
+      completedDates: user.completedDates,
       message: 'habit patched successfully'
     });
   } catch (err) {
