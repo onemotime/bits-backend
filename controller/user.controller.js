@@ -23,7 +23,7 @@ module.exports.fetchUser = async (req, res, next) => {
     const { email } = req.body;
     const users = await User.find({}, { userName : 1, following: 1, imageUri: 1 })
     const user = await User.findOne({ email });
-    console.log(users);
+
     res.json({
       status: 200,
       payload: {
@@ -121,6 +121,8 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
   try {
     const { email } = req.body;
 
+    if (!email) return;
+
     User.findOne({ email })
       .populate('following.id')
       .exec((err, followingUser) => {
@@ -129,12 +131,11 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
         }
 
         const followingUserHabits = followingUser.following.map(user => {
-          const userName = user.id.userName;
-          const habits = user.id.habits;
 
           return {
-            userName,
-            habits
+            userName: user.id.userName,
+            habits: user.id.habits,
+            imageUri: user.id.imageUri
           };
         });
 
@@ -153,7 +154,7 @@ module.exports.postImageUrl = async (req, res, next) => {
   try {
     const { uri, email } = req.body;
     const user = await User.findOne({ email });
-    console.log(uri, email);
+
     user.imageUri = uri;
     user.save();
 

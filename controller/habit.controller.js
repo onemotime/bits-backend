@@ -73,7 +73,7 @@ module.exports.postHabit = async (req, res, next) => {
 module.exports.patchHabit = async (req, res, next) => {
   try {
     const { email, habitType, date } = req.body;
-    console.log(date);
+
     const user = await User.findOne({ email });
 
     const sameHabitIndex = user.habits.findIndex(habit => {
