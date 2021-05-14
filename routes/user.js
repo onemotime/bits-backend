@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controller/user.controller');
+const verifyToken = require('../middleware/verifyToken');
 
-// router.get('/', userController.getUserInfo);
+router.get('/following', verifyToken, userController.fetchFollowingUser);
+router.get('/all', verifyToken, userController.fetchUser);
 router.post('/login', userController.login);
 router.post('/signup', userController.signup);
-router.post('/all', userController.fetchUser);
-router.post('/following', userController.fetchFollowingUser);
-
-router.patch('/follow', userController.followUser);
-router.patch('/image', userController.postImageUrl);
+router.patch('/follow', verifyToken, userController.followUser);
+router.patch('/image', verifyToken, userController.postImageUrl);
 
 module.exports = router;

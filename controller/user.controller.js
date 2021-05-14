@@ -3,24 +3,9 @@ const User = require('../model/User');
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 
-// module.exports.getUserInfo = async (req, res, next) => {
-//   try {
-//     const userEmail = req.userEmail;
-//     const userInfo = await User.findOne({ userEmail });
-
-//     if (!userInfo) next(createError(404, 'can not find user'));
-
-//     res
-//       .status(200)
-//       .json(userInfo);
-//   } catch (err) {
-//     next(createError(500, err.message));
-//   }
-// };
-
 module.exports.fetchUser = async (req, res, next) => {
   try {
-    const { email } = req.body;
+    const email = req.email;
     const users = await User.find({}, { userName : 1, following: 1, imageUri: 1 })
     const user = await User.findOne({ email });
 
@@ -51,8 +36,7 @@ module.exports.login = async (req, res, next) => {
       return next(createError(403, 'invalid password'));
     }
 
-    const accessToken = jwt.sign(JSON.stringify(user._id), process.env.JWT_SECRET);
-
+    const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
 
     res.json({
       status: 200,
@@ -62,7 +46,8 @@ module.exports.login = async (req, res, next) => {
       habits: user.habits,
       following: user.following,
       imageUri: user.imageUri,
-      completedDates: user.completedDates
+      completedDates: user.completedDates,
+      completedHabits: user.completedHabits
     });
   } catch (err) {
     next(createError(500, err.message));
@@ -96,7 +81,8 @@ module.exports.signup = async (req, res, next) => {
 
 module.exports.followUser = async (req, res, next) => {
   try {
-    const { email, followId } = req.body;
+    const email = req.email;
+    const { followId } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -119,9 +105,16 @@ module.exports.followUser = async (req, res, next) => {
 
 module.exports.fetchFollowingUser = async (req, res, next) => {
   try {
-    const { email } = req.body;
+    const email = req.email;
+    console.log('유저 컨트롤러 이메일 ' + email)
+    if (!email) {
+      res.json({
+        status: 400,
+        message: 'there is no email'
+      });
 
-    if (!email) return;
+      return;
+    }
 
     User.findOne({ email })
       .populate('following.id')
@@ -150,9 +143,9 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
 };
 
 module.exports.postImageUrl = async (req, res, next) => {
-  console.log(req.body);
   try {
-    const { uri, email } = req.body;
+    const { uri } = req.body;
+    const email = req.email;
     const user = await User.findOne({ email });
 
     user.imageUri = uri;

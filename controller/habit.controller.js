@@ -3,7 +3,8 @@ const createError =  require('http-errors');
 
 module.exports.postHabit = async (req, res, next) => {
   try {
-    const { email, actType, day, time } = req.body;
+    const email = req.email;
+    const { actType, day, time } = req.body;
 
     const user = await User.findOne({ email });
     const isFollowing = user.following.length === 0;
@@ -72,7 +73,8 @@ module.exports.postHabit = async (req, res, next) => {
 
 module.exports.patchHabit = async (req, res, next) => {
   try {
-    const { email, habitType, date } = req.body;
+    const email = req.email;
+    const { habitType, date } = req.body;
 
     const user = await User.findOne({ email });
 
@@ -112,15 +114,12 @@ module.exports.patchHabit = async (req, res, next) => {
 
 module.exports.deleteHabit = async (req, res, next) => {
   try {
-    const { email, targetIndex } = req.body;
+    const email = req.email;
+    const { targetIndex } = req.body;
 
     const currentUser = await User.findOne({ email });
 
     if (!currentUser) next(createError(404, 'can not find user'));
-
-    // const deleteIndex = user.habit.findIndex(item => {
-    //   return item.habitType === habitType;
-    // });
 
     currentUser.habits.splice(targetIndex, 1);
 
