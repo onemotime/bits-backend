@@ -57,7 +57,13 @@ const userSchema = new mongoose.Schema({
   completedHabits: {
     type: [
       {
-        type: String
+        habitType: {
+          type: String
+        },
+        completeCount: {
+          type: Number,
+          default: 0
+        }
       }
     ],
     default: []
@@ -87,7 +93,8 @@ const userSchema = new mongoose.Schema({
           type: Date
         },
         like: {
-          type: Number
+          type: Number,
+          default: 0
         }
       }
     ],

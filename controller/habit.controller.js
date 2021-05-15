@@ -86,12 +86,20 @@ module.exports.patchHabit = async (req, res, next) => {
 
     if (user.habits[sameHabitIndex].achivedDay === user.habits[sameHabitIndex].settedDay) {
       const isRegisteredHabit = user.completedHabits.some(habit => {
-        return habit === habitType;
+        return habit.habitType === habitType;
       });
 
       user.habits.splice(sameHabitIndex, 1);
 
-      if (!isRegisteredHabit) user.completedHabits.push(habitType);
+      if (isRegisteredHabit) {
+        const completeHabitIndex = user.completedHabits.findIndex(habit => {
+          return habit.habitType === habitType;
+        });
+
+        user.completedHabits[completeHabitIndex].completeCount += 1;
+      }
+
+      if (!isRegisteredHabit) user.completedHabits.push({ habitType });
 
       if (!user.completedDates.includes(date)) {
         user.completedDates.push(date);
@@ -112,18 +120,46 @@ module.exports.patchHabit = async (req, res, next) => {
   }
 };
 
+module.exports.patchHabitLike = async (req, res, next) => {
+  const { habitId, userId } = req.body;
+
+  const followUser = await User.findById(userId);
+
+  const habitIndex = followUser.habits.findIndex((habit) => {
+
+    return String(habit._id) === habitId;
+  });
+
+  if (habitIndex !== -1) {
+    followUser.habits[habitIndex].like += 1;
+    followUser.save();
+
+    res.json({
+      status: 200,
+      message: 'like successful'
+    });
+
+    return;
+  }
+
+  res.json({
+    status: 404,
+    message: 'cant find habit'
+  });
+};
+
 module.exports.deleteHabit = async (req, res, next) => {
   try {
     const email = req.email;
     const { targetIndex } = req.body;
 
-    const currentUser = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (!currentUser) next(createError(404, 'can not find user'));
+    if (!user) next(createError(404, 'can not find user'));
 
-    currentUser.habits.splice(targetIndex, 1);
+    user.habits.splice(targetIndex, 1);
 
-    await currentUser.save();
+    await user.save();
 
     res.json({
         status: 200,

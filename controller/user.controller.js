@@ -106,7 +106,7 @@ module.exports.followUser = async (req, res, next) => {
 module.exports.fetchFollowingUser = async (req, res, next) => {
   try {
     const email = req.email;
-    console.log('유저 컨트롤러 이메일 ' + email)
+
     if (!email) {
       res.json({
         status: 400,
@@ -126,6 +126,7 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
         const followingUserHabits = followingUser.following.map(user => {
 
           return {
+            userId: user.id._id,
             userName: user.id.userName,
             habits: user.id.habits,
             imageUri: user.id.imageUri
