@@ -61,9 +61,21 @@ module.exports.fetchUser = async (req, res, next) => {
   }
 };
 
+module.exports.fetchTokens = async (req, res, next) => {
+  try {
+    const pushTokens = await User.find({}, { pushToken: 1 });
+
+    console.log(pushTokens);
+  } catch (err) {
+    next(createError(500, err.message));
+  }
+};
+
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password, pushToken } = req.body;
+    console.log('푸쉬토큰' + pushToken);
+    console.log('이메일' + email)
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -79,7 +91,7 @@ module.exports.login = async (req, res, next) => {
     const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
 
     user.pushToken = pushToken;
-    user.save();
+    await user.save();
 
     res.json({
       status: 200,
@@ -87,6 +99,7 @@ module.exports.login = async (req, res, next) => {
       email,
       accessToken,
       habits: user.habits,
+      followers: user.followers,
       following: user.following,
       imageUri: user.imageUri,
       completedDates: user.completedDates,
@@ -135,7 +148,10 @@ module.exports.followUser = async (req, res, next) => {
     const followUser = await User.findById(followId);
 
     user.following.push({ id: followUser._id, isSubscribing: true });
-    user.save();
+    followUser.followers.push(user._id);
+
+    await user.save();
+    await followUser.save();
 
     res.json({
       status: 200,
