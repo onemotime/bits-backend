@@ -120,32 +120,36 @@ module.exports.patchHabit = async (req, res, next) => {
 };
 
 module.exports.patchHabitLike = async (req, res, next) => {
-  const { habitId, userId } = req.body;
-  const followUser = await User.findById(userId);
+  try {
+    const { habitId, userId } = req.body;
+    const followUser = await User.findById(userId);
 
-  const habitIndex = followUser.habits.findIndex((habit) => {
+    const habitIndex = followUser.habits.findIndex((habit) => {
 
-    return String(habit._id) === habitId;
-  });
-
-  if (habitIndex !== -1) {
-    followUser.habits[habitIndex].like += 1;
-    followUser.save();
-
-    res.json({
-      status: 200,
-      message: MESSAGE.LIKE_PATCHED_SUCCESS
+      return String(habit._id) === habitId;
     });
 
-    return;
+    if (habitIndex !== -1) {
+      followUser.habits[habitIndex].like += 1;
+      followUser.save();
+
+      res.json({
+        status: 200,
+        message: MESSAGE.LIKE_PATCHED_SUCCESS
+      });
+
+      return;
+    }
+
+    res
+      .status(200)
+      .json({
+        status: 200,
+        message: MESSAGE.CANT_FIND_HABIT
+      });
+  } catch (err) {
+    next(createError(500, err.message));
   }
-
-  res
-    .status(204)
-    .json({
-      status: 204,
-      message: MESSAGE.CANT_FIND_HABIT
-    });
 };
 
 module.exports.deleteHabit = async (req, res, next) => {

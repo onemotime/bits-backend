@@ -154,6 +154,29 @@ describe('APP TEST', function () {
     });
   });
 
+  describe('PATCH `/habit/like`', () => {
+    it('should patch registered habit', (done) => {
+      request(app)
+        .patch(`${ROUTES.HABIT}${ROUTES.LIKE}`)
+        .set('Authorization', `${token}`)
+        .send({
+          habitId: '3',
+          userId: mockUserId
+        })
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          const { status, message } = res.body;
+
+          expect(status).to.eql(200);
+          expect(message).to.eql(MESSAGE.CANT_FIND_HABIT);
+
+          done();
+        });
+    });
+  });
+
   describe('DELETE `/habit', () => {
     it('should delete user habit', (done) => {
       request(app)
