@@ -3,12 +3,14 @@ const { expect } = require('chai');
 const app = require('../app');
 const argon2 = require('argon2');
 const User = require('../model/User');
+const { MESSAGE } = require('../constans');
 
 describe('APP TEST', function () {
   this.timeout(7000);
 
   const mongoose = require('mongoose');
   const db = mongoose.connection;
+
   const unhashedMockUser = {
     email: 'test@test.com',
     password: 'test',
@@ -33,7 +35,7 @@ describe('APP TEST', function () {
     mockUserId = user._id;
   };
 
-  const deleteUser = async () => {
+  const deleteUser = async (done) => {
     await User.findByIdAndDelete(mockUserId);
   };
 
@@ -68,7 +70,7 @@ describe('APP TEST', function () {
     token = null;
   });
 
-  describe('GET `/use/all`', () => {
+  describe('GET `/user/all`', () => {
     it('should get all users', (done) => {
       request(app)
         .get('/user/all')
@@ -84,6 +86,26 @@ describe('APP TEST', function () {
 
           done();
       });
+    });
+  });
+
+  describe('GET `/user/following`', () => {
+    it('should get following users', (done) => {
+      request(app)
+        .get('/user/following')
+        .set('Authorization', `${token}`)
+        .send({ email: unhashedMockUser.email })
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          const { status, followingUserHabits } = res.body;
+
+          expect(status).to.eql(200);
+          expect(Array.isArray(followingUserHabits)).to.be.true;
+
+          done();
+        });
     });
   });
 });
