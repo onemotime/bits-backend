@@ -82,19 +82,19 @@ module.exports.login = async (req, res, next) => {
   try {
     const { email, password, pushToken } = req.body;
     const user = await User.findOne({ email });
-
+    console.log('here');
     if (!user) {
       return next(createError(400, MESSAGE.CANT_FIND_USER));
     }
-
+    console.log('here2')
     const isCorrectPassword = await argon2.verify(user.password, password);
-
+    console.log('here3');
     if (!isCorrectPassword) {
       return next(createError(403, MESSAGE.INVALID_PASSWORD));
     }
-
+    console.log('here4');
     const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
-
+    console.log('here5');
     user.pushToken = pushToken;
     await user.save();
 

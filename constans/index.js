@@ -23,7 +23,9 @@ const MESSAGE = {
   CANT_FIND_EMAIL: 'can not find email',
   INVALID_PASSWORD: 'invalid password',
   ALREADY_EXISTING_USER: 'already existing user',
-  USER_SIGNEDUP_SUCCESSFULLY: 'user signedup successfully'
+  USER_SIGNEDUP_SUCCESSFULLY: 'user signedup successfully',
+  MONGODB_CONNECT_SUCCESS: 'mongodb connected successfully',
+  MONGODB_CONNECT_ERROR: 'error on connecting to mongodb'
 };
 
 module.exports = { ROUTES, MESSAGE };

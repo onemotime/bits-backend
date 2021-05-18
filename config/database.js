@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
 const { databaseURI, databasePassword } = require('./index');
+const { MESSAGE } = require('../constans');
 
 const connectMongoose = async () => {
   try {
@@ -15,9 +15,9 @@ const connectMongoose = async () => {
       }
     );
 
-    console.log('Successfully connected to mongodb');
-  } catch (error) {
-    console.error(`Error on connect to mongodb ${error}`);
+    console.log(`${MESSAGE.MONGODB_CONNECT_SUCCESS}`);
+  } catch (err) {
+    console.error(`${MESSAGE.MONGODB_CONNECT_ERROR} ${err}`);
   }
 };
 
