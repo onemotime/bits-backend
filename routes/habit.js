@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const habitController = require('../controller/habit.controller');
 const verifyToken = require('../middleware/verifyToken');
+const { ROUTES } = require('../constans');
 
-router.post('/', verifyToken, habitController.postHabit);
+router.post(`${ROUTES.HOME}`, verifyToken, habitController.postHabit);
 
-router.patch('/', verifyToken, habitController.patchHabit);
-router.patch('/like', verifyToken, habitController.patchHabitLike);
+router.patch(`${ROUTES.HOME}`, verifyToken, habitController.patchHabit);
+router.patch(`${ROUTES.LIKE}`, verifyToken, habitController.patchHabitLike);
 
-router.delete('/', verifyToken, habitController.deleteHabit);
+router.delete(`${ROUTES.HOME}`, verifyToken, habitController.deleteHabit);
 
 module.exports = router;
