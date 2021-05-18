@@ -35,7 +35,7 @@ describe('APP TEST', function () {
     mockUserId = user._id;
   };
 
-  const deleteUser = async (done) => {
+  const deleteUser = async () => {
     await User.findByIdAndDelete(mockUserId);
   };
 
@@ -94,7 +94,7 @@ describe('APP TEST', function () {
       request(app)
         .get('/user/following')
         .set('Authorization', `${token}`)
-        .send({ email: unhashedMockUser.email })
+        .send({ email: mockUser.email })
         .expect(200)
         .end((err, res) => {
           if (err) return done(err);
@@ -103,6 +103,26 @@ describe('APP TEST', function () {
 
           expect(status).to.eql(200);
           expect(Array.isArray(followingUserHabits)).to.be.true;
+
+          done();
+        });
+    });
+  });
+
+  describe('PATCH `/user/image`', () => {
+    it('should patch user image', (done) => {
+      request(app)
+        .patch('/user/image')
+        .set('Authorization', `${token}`)
+        .send({ uri: 'testImgUri' })
+        .expect(201)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          const { status, uri } = res.body;
+
+          expect(status).to.eql(201);
+          expect(uri).to.eql('testImgUri');
 
           done();
         });

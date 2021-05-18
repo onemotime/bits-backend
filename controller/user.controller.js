@@ -178,10 +178,12 @@ module.exports.postImageUrl = async (req, res, next) => {
     user.imageUri = uri;
     user.save();
 
-    res.json({
-      status: 201,
-      uri
-    });
+    res
+      .status(201)
+      .json({
+        status: 201,
+        uri
+      });
   } catch (err) {
     next(createError(500, err));
   }

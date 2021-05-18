@@ -22,11 +22,13 @@ module.exports.postHabit = async (req, res, next) => {
       user.habits.push(newHabit);
       user.save();
 
-      res.json({
-        status: 201,
-        habits: user.habits,
-        message: MESSAGE.HABIT_REGISTERED_SUCCESS
-      });
+      res
+        .status(201)
+        .json({
+          status: 201,
+          habits: user.habits,
+          message: MESSAGE.HABIT_REGISTERED_SUCCESS
+        });
 
       return;
     }
@@ -57,11 +59,13 @@ module.exports.postHabit = async (req, res, next) => {
     user.habits.push(newHabit);
     user.save();
 
-    res.json({
-      status: 201,
-      habits: user.habits,
-      message: MESSAGE.HABIT_REGISTERED_SUCCESS
-    });
+    res
+      .status(201)
+      .json({
+        status: 201,
+        habits: user.habits,
+        message: MESSAGE.HABIT_REGISTERED_SUCCESS
+      });
   } catch (err) {
     next(createError(500, err.message));
   }
@@ -136,10 +140,12 @@ module.exports.patchHabitLike = async (req, res, next) => {
     return;
   }
 
-  res.json({
-    status: 404,
-    message: MESSAGE.CANT_FIND_HABIT
-  });
+  res
+    .status(204)
+    .json({
+      status: 204,
+      message: MESSAGE.CANT_FIND_HABIT
+    });
 };
 
 module.exports.deleteHabit = async (req, res, next) => {
