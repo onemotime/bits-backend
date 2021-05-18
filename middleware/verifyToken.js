@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 const User = require('../model/User');
+const { MESSAGE } = require('../constans');
 
 module.exports = async (req, res, next) => {
   try {
@@ -17,10 +18,7 @@ module.exports = async (req, res, next) => {
 
     res
       .status(204)
-      .json({
-        result: 'failure',
-        message: 'user not found',
-      });
+      .json({ message: MESSAGE.CANT_FIND_USER });
   } catch (err) {
     next(createError(500, err.message));
   }

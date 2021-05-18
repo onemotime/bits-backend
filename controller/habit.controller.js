@@ -1,5 +1,6 @@
 const User = require('../model/User');
 const createError =  require('http-errors');
+const { MESSAGE } = require('../constans');
 
 module.exports.postHabit = async (req, res, next) => {
   try {
@@ -24,7 +25,7 @@ module.exports.postHabit = async (req, res, next) => {
       res.json({
         status: 201,
         habits: user.habits,
-        message: 'habit registered successfully'
+        message: MESSAGE.HABIT_REGISTERED_SUCCESS
       });
 
       return;
@@ -59,7 +60,7 @@ module.exports.postHabit = async (req, res, next) => {
     res.json({
       status: 201,
       habits: user.habits,
-      message: 'habit registered successfully'
+      message: MESSAGE.HABIT_REGISTERED_SUCCESS
     });
   } catch (err) {
     next(createError(500, err.message));
@@ -107,7 +108,7 @@ module.exports.patchHabit = async (req, res, next) => {
       habits: user.habits,
       completedHabits: user.completedHabits,
       completedDates: user.completedDates,
-      message: 'habit patched successfully'
+      message: MESSAGE.HABIT_PATCHED_SUCCESS
     });
   } catch (err) {
     next(createError(500, err.message));
@@ -129,7 +130,7 @@ module.exports.patchHabitLike = async (req, res, next) => {
 
     res.json({
       status: 200,
-      message: 'like successful'
+      message: MESSAGE.LIKE_PATCHED_SUCCESS
     });
 
     return;
@@ -137,7 +138,7 @@ module.exports.patchHabitLike = async (req, res, next) => {
 
   res.json({
     status: 404,
-    message: 'cant find habit'
+    message: MESSAGE.CANT_FIND_HABIT
   });
 };
 
@@ -147,7 +148,7 @@ module.exports.deleteHabit = async (req, res, next) => {
     const { targetIndex } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user) next(createError(404, 'can not find user'));
+    if (!user) next(createError(404, MESSAGE.CANT_FIND_USER));
 
     user.habits.splice(targetIndex, 1);
 
@@ -155,8 +156,7 @@ module.exports.deleteHabit = async (req, res, next) => {
 
     res.json({
         status: 200,
-        result: 'success',
-        message: 'habit deleted succefully'
+        message: MESSAGE.HABIT_DELETED_SUCCESS
       });
   } catch (err) {
     next(createError(500, err.message));

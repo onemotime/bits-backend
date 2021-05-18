@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const User = require('../model/User');
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
+const { MESSAGE } = require('../constans');
 
 module.exports.fetchFollowingUser = async (req, res, next) => {
   try {
@@ -10,7 +11,7 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
     if (!email) {
       res.json({
         status: 400,
-        message: 'there is no email'
+        message: MESSAGE.CANT_FIND_EMAIL
       });
 
       return;
@@ -83,13 +84,13 @@ module.exports.login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return next(createError(400, 'user not exist'));
+      return next(createError(400, MESSAGE.CANT_FIND_USER));
     }
 
     const isCorrectPassword = await argon2.verify(user.password, password);
 
     if (!isCorrectPassword) {
-      return next(createError(403, 'invalid password'));
+      return next(createError(403, MESSAGE.INVALID_PASSWORD));
     }
 
     const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
@@ -121,7 +122,7 @@ module.exports.signup = async (req, res, next) => {
     const hashedPassword = await argon2.hash(password, 10);
 
     if (isUserExists) {
-      return next(createError(409, 'already existing user'));
+      return next(createError(409, MESSAGE.ALREADY_EXISTING_USER));
     }
 
     await User.create({
@@ -132,7 +133,7 @@ module.exports.signup = async (req, res, next) => {
 
     res.json({
       status: 201,
-      message: 'user signedup sucessfully'
+      message: MESSAGE.USER_SIGNEDUP_SUCCESSFULLY
     });
   } catch (err) {
     next(createError(500, err));
@@ -146,7 +147,7 @@ module.exports.followUser = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return next(createError(400, 'user not exist'));
+      return next(createError(400, MESSAGE.CANT_FIND_USER));
     }
 
     const followUser = await User.findById(followId);

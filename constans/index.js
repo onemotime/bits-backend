@@ -1,5 +1,7 @@
 const ROUTES = {
   HOME: '/',
+  USER: '/user',
+  HABIT: '/habit',
   LOGIN: '/login',
   LOGOUT: '/logout',
   LIKE: '/like',
@@ -11,4 +13,17 @@ const ROUTES = {
   SIGNUP: '/signup'
 };
 
-module.exports = { ROUTES };
+const MESSAGE = {
+  HABIT_REGISTERED_SUCCESS: 'habit registered successfully',
+  HABIT_PATCHED_SUCCESS: 'habit patched successfully',
+  HABIT_DELETED_SUCCESS: 'habit deleted successfully',
+  LIKE_PATCHED_SUCCESS: 'habit liked successfully',
+  CANT_FIND_HABIT: 'can not find habit',
+  CANT_FIND_USER: 'can not find user',
+  CANT_FIND_EMAIL: 'can not find email',
+  INVALID_PASSWORD: 'invalid password',
+  ALREADY_EXISTING_USER: 'already existing user',
+  USER_SIGNEDUP_SUCCESSFULLY: 'user signedup successfully'
+};
+
+module.exports = { ROUTES, MESSAGE };

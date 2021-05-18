@@ -4,9 +4,10 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const { ROUTES } = require('./constans');
 
 const userRouter = require('./routes/user');
-const habitRouter = require('./routes/habit')
+const habitRouter = require('./routes/habit');
 
 const app = express();
 
@@ -17,8 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/user', userRouter);
-app.use('/habit', habitRouter);
+app.use(`${ROUTES.USER}`, userRouter);
+app.use(`${ROUTES.HABIT}`, habitRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
