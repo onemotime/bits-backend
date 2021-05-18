@@ -5,7 +5,6 @@ module.exports.postHabit = async (req, res, next) => {
   try {
     const email = req.email;
     const { actType, day, time } = req.body;
-
     const user = await User.findOne({ email });
     const isFollowing = user.following.length === 0;
 
@@ -31,41 +30,37 @@ module.exports.postHabit = async (req, res, next) => {
       return;
     }
 
-    User.findOne({ email })
-      .populate('following.id')
-      .exec((err, populatedUser) => {
-        if (err) {
-          next(createError(500, err.message));
+    const populatedUser = await User
+                                  .findOne({ email })
+                                  .populate('following.id');
+
+    let sameHabitCount = 0;
+
+    populatedUser.following.map(followingUser => {
+      followingUser.id.habits.forEach(habit => {
+        if (habit.habitType === actType) {
+          sameHabitCount++;
         }
-
-        let sameHabitCount = 0;
-
-        populatedUser.following.map(followingUser => {
-          followingUser.id.habits.forEach(habit => {
-            if (habit.habitType === actType) {
-              sameHabitCount++;
-            }
-          });
-        });
-
-        const newHabit = {
-          habitType: actType,
-          settedDay: day,
-          settedTime: time,
-          achivedDay: 0,
-          mate: sameHabitCount,
-          like: 0
-        };
-
-        user.habits.push(newHabit);
-        user.save();
-
-        res.json({
-          status: 201,
-          habits: user.habits,
-          message: 'habit registered successfully'
-        });
       });
+    });
+
+    const newHabit = {
+      habitType: actType,
+      settedDay: day,
+      settedTime: time,
+      achivedDay: 0,
+      mate: sameHabitCount,
+      like: 0
+    };
+
+    user.habits.push(newHabit);
+    user.save();
+
+    res.json({
+      status: 201,
+      habits: user.habits,
+      message: 'habit registered successfully'
+    });
   } catch (err) {
     next(createError(500, err.message));
   }
@@ -75,7 +70,6 @@ module.exports.patchHabit = async (req, res, next) => {
   try {
     const email = req.email;
     const { habitType, date } = req.body;
-
     const user = await User.findOne({ email });
 
     const sameHabitIndex = user.habits.findIndex(habit => {
@@ -122,7 +116,6 @@ module.exports.patchHabit = async (req, res, next) => {
 
 module.exports.patchHabitLike = async (req, res, next) => {
   const { habitId, userId } = req.body;
-
   const followUser = await User.findById(userId);
 
   const habitIndex = followUser.habits.findIndex((habit) => {
@@ -152,7 +145,6 @@ module.exports.deleteHabit = async (req, res, next) => {
   try {
     const email = req.email;
     const { targetIndex } = req.body;
-
     const user = await User.findOne({ email });
 
     if (!user) next(createError(404, 'can not find user'));

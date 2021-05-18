@@ -16,28 +16,24 @@ module.exports.fetchFollowingUser = async (req, res, next) => {
       return;
     }
 
-    User.findOne({ email })
-      .populate('following.id')
-      .exec((err, followingUser) => {
-        if (err) {
-          next(createError(500, err.message));
-        }
+    const populatedUser = await User
+                                  .findOne({ email })
+                                  .populate('following.id');
 
-        const followingUserHabits = followingUser.following.map(user => {
+    const followingUserHabits = populatedUser.following.map(user => {
 
-          return {
-            userId: user.id._id,
-            userName: user.id.userName,
-            habits: user.id.habits,
-            imageUri: user.id.imageUri
-          };
-        });
+      return {
+        userId: user.id._id,
+        userName: user.id.userName,
+        habits: user.id.habits,
+        imageUri: user.id.imageUri
+      };
+    });
 
-        res.json({
-          status: 200,
-          followingUserHabits
-        });
-      });
+    res.json({
+      status: 200,
+      followingUserHabits
+    });
   } catch (err) {
     next(createError(500, err));
   }
