@@ -9,9 +9,9 @@ router.get(`${ROUTES.FOLLOWING}`, verifyToken, userController.fetchFollowingUser
 router.get(`${ROUTES.PUSH_TOKENS}`, verifyToken, userController.fetchTokens)
 
 router.post(`${ROUTES.LOGIN}`, userController.login);
-router.post('/signup', userController.signup);
+router.post(`${ROUTES.SIGNUP}`, userController.signup);
 
-router.patch('/follow', verifyToken, userController.followUser);
-router.patch('/image', verifyToken, userController.postImageUrl);
+router.patch(`${ROUTES.FOLLOW}`, verifyToken, userController.followUser);
+router.patch(`${ROUTES.IMAGE}`, verifyToken, userController.postImageUrl);
 
 module.exports = router;
