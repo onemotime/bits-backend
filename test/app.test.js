@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const app = require('../app');
 const argon2 = require('argon2');
 const User = require('../model/User');
-const { MESSAGE } = require('../constans');
+const { MESSAGE, ROUTES } = require('../constans');
 
 describe('APP TEST', function () {
   this.timeout(7000);
@@ -54,7 +54,7 @@ describe('APP TEST', function () {
 
   beforeEach((done) => {
     request(app)
-      .post('/user/login')
+      .post(`${ROUTES.USER}${ROUTES.LOGIN}`)
       .send(unhashedMockUser)
       .expect(200)
       .end((err, res) => {
@@ -73,7 +73,7 @@ describe('APP TEST', function () {
   describe('GET `/user/all`', () => {
     it('should get all users', (done) => {
       request(app)
-        .get('/user/all')
+        .get(`${ROUTES.USER}${ROUTES.ALL}`)
         .set('Authorization', `${token}`)
         .expect(200)
         .end((err, res) => {
@@ -92,7 +92,7 @@ describe('APP TEST', function () {
   describe('GET `/user/following`', () => {
     it('should get following users', (done) => {
       request(app)
-        .get('/user/following')
+        .get(`${ROUTES.USER}${ROUTES.FOLLOWING}`)
         .set('Authorization', `${token}`)
         .send({ email: mockUser.email })
         .expect(200)
@@ -112,7 +112,7 @@ describe('APP TEST', function () {
   describe('PATCH `/user/image`', () => {
     it('should patch user image', (done) => {
       request(app)
-        .patch('/user/image')
+        .patch(`${ROUTES.USER}${ROUTES.IMAGE}`)
         .set('Authorization', `${token}`)
         .send({ uri: 'testImgUri' })
         .expect(201)
@@ -123,6 +123,50 @@ describe('APP TEST', function () {
 
           expect(status).to.eql(201);
           expect(uri).to.eql('testImgUri');
+
+          done();
+        });
+    });
+  });
+
+  describe('POST `/habit`', () => {
+    it('should post user habit', (done) => {
+      request(app)
+        .post(`${ROUTES.HABIT}`)
+        .set('Authorization', `${token}`)
+        .send({
+          actType: 'code',
+          day: '1',
+          time: '3'
+        })
+        .expect(201)
+        .end((err, res) => {
+          if (err) return done(err);
+
+          const { status, habits, message } = res.body;
+
+          expect(status).to.eql(201);
+          expect(Array.isArray(habits)).to.be.true;
+          expect(message).to.eql(MESSAGE.HABIT_REGISTERED_SUCCESS);
+
+          done();
+        });
+    });
+  });
+
+  describe('DELETE `/habit', () => {
+    it('should delete user habit', (done) => {
+      request(app)
+        .delete(`${ROUTES.HABIT}`)
+        .set('Authorization', `${token}`)
+        .send({ targetIndex: 1 })
+        .end((err, res) => {
+          if (err) return done(err);
+
+          const { status, message } = res.body;
+
+          expect(status).to.eql(200);
+          expect(message).to.eql(MESSAGE.HABIT_DELETED_SUCCESS);
 
           done();
         });
