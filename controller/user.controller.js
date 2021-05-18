@@ -63,9 +63,19 @@ module.exports.fetchUser = async (req, res, next) => {
 
 module.exports.fetchTokens = async (req, res, next) => {
   try {
-    const pushTokens = await User.find({}, { pushToken: 1 });
+    const email = req.email;
+    const populatedUser = await User
+                                  .findOne({ email })
+                                  .populate('followers');
 
-    console.log(pushTokens);
+    const followerPushTokens = populatedUser.followers.map(follower => {
+      return follower.pushToken;
+    });
+
+    res.json({
+      status: 200,
+      pushTokens: followerPushTokens
+    });
   } catch (err) {
     next(createError(500, err.message));
   }
@@ -74,8 +84,6 @@ module.exports.fetchTokens = async (req, res, next) => {
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password, pushToken } = req.body;
-    console.log('푸쉬토큰' + pushToken);
-    console.log('이메일' + email)
     const user = await User.findOne({ email });
 
     if (!user) {
