@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { databaseURI, databasePassword } = require('./index');
-const { MESSAGE } = require('../constans');
+const { MESSAGE } = require('../constants');
 
 const connectMongoose = async () => {
   try {

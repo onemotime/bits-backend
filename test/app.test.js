@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const app = require('../app');
 const argon2 = require('argon2');
 const User = require('../model/User');
-const { MESSAGE, ROUTES } = require('../constans');
+const { MESSAGE, ROUTES } = require('../constants');
 
 describe('APP TEST', function () {
   this.timeout(7000);

@@ -4,7 +4,7 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { ROUTES } = require('./constans');
+const { ROUTES } = require('./constants');
 
 const userRouter = require('./routes/user');
 const habitRouter = require('./routes/habit');

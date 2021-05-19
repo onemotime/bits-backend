@@ -1,12 +1,12 @@
 const express = require('express');
-const { ROUTES } = require('../constans');
+const { ROUTES } = require('../constants');
 const router = express.Router();
 const userController = require('../controller/user.controller');
 const verifyToken = require('../middleware/verifyToken');
 
 router.get(`${ROUTES.ALL}`, verifyToken, userController.fetchUser);
 router.get(`${ROUTES.FOLLOWING}`, verifyToken, userController.fetchFollowingUser);
-router.get(`${ROUTES.PUSH_TOKENS}`, verifyToken, userController.fetchTokens)
+router.get(`${ROUTES.PUSH_TOKENS}`, verifyToken, userController.fetchTokens);
 
 router.post(`${ROUTES.LOGIN}`, userController.login);
 router.post(`${ROUTES.SIGNUP}`, userController.signup);

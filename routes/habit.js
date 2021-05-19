@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const habitController = require('../controller/habit.controller');
 const verifyToken = require('../middleware/verifyToken');
-const { ROUTES } = require('../constans');
+const { ROUTES } = require('../constants');
 
 router.post(`${ROUTES.HOME}`, verifyToken, habitController.postHabit);
 
