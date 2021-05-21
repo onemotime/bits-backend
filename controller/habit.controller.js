@@ -20,7 +20,7 @@ module.exports.postHabit = catchAsync(async (req, res, next) => {
     };
 
     user.habits.push(newHabit);
-    user.save();
+    await user.save();
 
     res
       .status(201)
@@ -57,7 +57,7 @@ module.exports.postHabit = catchAsync(async (req, res, next) => {
   };
 
   user.habits.push(newHabit);
-  user.save();
+  await user.save();
 
   res
     .status(201)
@@ -101,7 +101,7 @@ module.exports.patchHabit = catchAsync(async (req, res, next) => {
     }
   }
 
-  user.save();
+  await user.save();
 
   res.json({
     status: 200,

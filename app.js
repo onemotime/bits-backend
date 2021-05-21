@@ -4,7 +4,7 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { ROUTES } = require('./constants');
+const { ROUTES, MESSAGE } = require('./constants');
 
 const userRouter = require('./routes/user');
 const habitRouter = require('./routes/habit');
@@ -26,12 +26,15 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(err, req, res, next) {
-  console.log(err.message);
-  res.status(err.status || 500);
-  res.json({
-    status: err.status,
-    message: err.message ? err.message : 'Internal server error'
-  });
+  console.error(err);
+
+  err.status
+    ? res
+        .status(err.status)
+        .json({ result: err.message })
+    : res
+        .status(500)
+        .json({ result: MESSAGE.INTERNAL_SERVER_ERROR });
 });
 
 module.exports = app;

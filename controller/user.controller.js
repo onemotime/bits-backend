@@ -9,10 +9,12 @@ module.exports.fetchFollowingUser = catchAsync(async (req, res, next) => {
   const email = req.email;
 
   if (!email) {
-    res.json({
-      status: 400,
-      message: MESSAGE.CANT_FIND_EMAIL
-    });
+    res
+      .status(400)
+      .json({
+        status: 400,
+        message: MESSAGE.CANT_FIND_EMAIL
+      });
 
     return;
   }
@@ -147,12 +149,12 @@ module.exports.followUser = catchAsync(async (req, res, next) => {
 });
 
 module.exports.postImageUrl = catchAsync(async (req, res, next) => {
-  const { uri } = req.body;
   const email = req.email;
+  const { uri } = req.body;
   const user = await User.findOne({ email });
 
   user.imageUri = uri;
-  user.save();
+  await user.save();
 
   res
     .status(201)
