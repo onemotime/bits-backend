@@ -117,7 +117,6 @@ module.exports.patchHabitLike = catchAsync(async (req, res, next) => {
   const followUser = await User.findById(userId);
 
   const habitIndex = followUser.habits.findIndex((habit) => {
-
     return String(habit._id) === habitId;
   });
 
