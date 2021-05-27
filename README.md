@@ -5,7 +5,7 @@
 # 🎥 발표영상
 
 <img width="1243" alt="프로젝트 발표" src="https://user-images.githubusercontent.com/72064489/119790455-ea858b80-bf0e-11eb-81e3-f09d760f8916.png">
-<a href='https://youtu.be/F8OHnevCS30?t=2523'>유튜브 링크 [ 42분 03초 시작 ] </a>
+<a href='https://youtu.be/F8OHnevCS30?t=2523'>유튜브 링크 [ 42분 03초 ~ 47분 15초 ] </a>
 
 # 📌 Table Contents
 
